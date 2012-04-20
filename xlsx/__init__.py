@@ -147,19 +147,20 @@ class Sheet(object):
                 # fill in missing cells
                 col_idx = xlcol2num(colNum)
                 if not cell_ids and col_idx > 1:
-                    print colNum, 'first'
                     for i in range(1, col_idx):
-                        cell = Cell(rowNum, num2xlcol(i), u'', formula=None)
+                        xlcol = num2xlcol(i)
+                        cell = Cell(rowNum, xlcol, u'', formula=None)
                         rows[rowNum].append(cell)
                         columns[colNum].append(cell)
-                        self.__cells[u'{0}{1}'.format(colNum, rowNum)] = cell
+                        self.__cells[u'{0}{1}'.format(xlcol, rowNum)] = cell
                         cell_ids.append(col_idx)
                 elif cell_ids and col_idx > cell_ids[-1] + 1:
                     for i in range(cell_ids[-1] + 1, col_idx):
-                        cell = Cell(rowNum, num2xlcol(i), u'', formula=None)
+                        xlcol = num2xlcol(i)
+                        cell = Cell(rowNum, xlcol, u'', formula=None)
                         rows[rowNum].append(cell)
                         columns[colNum].append(cell)
-                        self.__cells[u'{0}{1}'.format(colNum, rowNum)] = cell
+                        self.__cells[u'{0}{1}'.format(xlcol, rowNum)] = cell
                         cell_ids.append(col_idx)
 
                 cell_ids.append(col_idx)
