@@ -5,8 +5,12 @@ A small footprint xslx reader that understands shared strings and can process
 excel dates.
 
 This fork adds:
-    * transparent support for empty cells.
-    * fixes row lookups e.g. sheet['6']
+    * Transparent support for empty cells.
+    * Fixes row lookups e.g. sheet['6']
+
+TODO:
+    * Blank rows are currently skipped. I'd like change this, possibly to a
+      row with a single, empty cell.
 
 Usage
 +++++++
