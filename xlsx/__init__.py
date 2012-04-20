@@ -3,11 +3,14 @@
 __author__="Ståle Undheim <staale@staale.org>, rupa <rupa@lrrr.us>"
 
 import re
+import warnings
 import zipfile
 from xldate import xldate_as_tuple
 from xlcols import num2xlcol, xlcol2num
 
 from xml.dom import minidom
+
+warnings.simplefilter('ignore', UserWarning)
 
 class DomZip(object):
     """ Excel xlsx files are zip files containing xml documents.
@@ -142,6 +145,17 @@ class Sheet(object):
                 formula = None
                 data = ''
 
+                # malformed files with blank colNums
+                # if this is the case, we just have to assume we're not
+                # missing any cells.
+                if not colNum:
+                    warnings.warn('Blank Column Found')
+                    if not cell_ids:
+                        colNum = u'A'
+                    else:
+                        colNum = num2xlcol(cell_ids[-1] + 1)
+                    cellId = u'{0}{1}'.format(colNum, rowNum)
+
                 if not rowNum in rows:
                     rows[rowNum] = []
                 if not colNum in columns:
@@ -152,6 +166,9 @@ class Sheet(object):
                 if not cell_ids and col_idx > 1:
                     for i in range(1, col_idx):
                         xlcol = num2xlcol(i)
+                        warnings.warn('Filling In Skipped Cell {0}'.format(
+                            xlcol
+                        ))
                         cell = Cell(rowNum, xlcol, u'', formula=None)
                         rows[rowNum].append(cell)
                         columns[colNum].append(cell)
@@ -160,6 +177,9 @@ class Sheet(object):
                 elif cell_ids and col_idx > cell_ids[-1] + 1:
                     for i in range(cell_ids[-1] + 1, col_idx):
                         xlcol = num2xlcol(i)
+                        warnings.warn('Filling In Skipped Cell {0}'.format(
+                            xlcol
+                        ))
                         cell = Cell(rowNum, xlcol, u'', formula=None)
                         rows[rowNum].append(cell)
                         columns[colNum].append(cell)
