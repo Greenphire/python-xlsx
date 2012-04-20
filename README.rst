@@ -7,6 +7,7 @@ excel dates.
 This fork adds:
     * Transparent support for empty cells.
     * Fixes row lookups e.g. sheet['6']
+    * Handle malformed files with blank column names.
 
 TODO:
     * Blank rows are currently skipped. I'd like change this to an empty list.
