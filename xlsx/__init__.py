@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Small footprint xlsx reader """
-__author__="Ståle Undheim <staale@staale.org>"
+__author__="Ståle Undheim <staale@staale.org>, rupa <rupa@lrrr.us>"
 
 import re
 import zipfile
