@@ -5,6 +5,7 @@ __author__="Ståle Undheim <staale@staale.org>"
 import re
 import zipfile
 from xldate import xldate_as_tuple
+from xlcols import num2xlcol, xlcol2num
 
 from xml.dom import minidom
 
@@ -59,7 +60,7 @@ class Workbook(object):
         #  http://superuser.com/questions/195548/excel-2007-modify-creation-date-statistics
         docPropsCoreDoc = self.domzip["docProps/core.xml"]
         self.dcterms_modified = docPropsCoreDoc.firstChild.getElementsByTagName("dcterms:modified")[0].childNodes[0].data
-        
+
         workbookDoc = self.domzip["xl/workbook.xml"]
         sheets = workbookDoc.firstChild.getElementsByTagName("sheets")[0]
         id = 1
@@ -73,7 +74,7 @@ class Workbook(object):
 
     def keys(self):
         return self.__sheetsByName.keys()
-        
+
     def close(self):
         self.domzip.__del__()
 
@@ -129,6 +130,7 @@ class Sheet(object):
         columns = {}
         for rowNode in sheetData.childNodes:
             rowNum = int(rowNode.getAttribute("r"))
+            cell_ids = []
             for columnNode in rowNode.childNodes:
                 colType = columnNode.getAttribute("t")
                 cellId = columnNode.getAttribute("r")
@@ -136,6 +138,32 @@ class Sheet(object):
                 colNum = cellId[:len(cellId)-len(str(rowNum))]
                 formula = None
                 data = ''
+
+                if not rowNum in rows:
+                    rows[rowNum] = []
+                if not colNum in columns:
+                    columns[colNum] = []
+
+                # fill in missing cells
+                col_idx = xlcol2num(colNum)
+                if not cell_ids and col_idx > 1:
+                    print colNum, 'first'
+                    for i in range(1, col_idx):
+                        cell = Cell(rowNum, num2xlcol(i), u'', formula=None)
+                        rows[rowNum].append(cell)
+                        columns[colNum].append(cell)
+                        self.__cells[u'{0}{1}'.format(colNum, rowNum)] = cell
+                        cell_ids.append(col_idx)
+                elif cell_ids and col_idx > cell_ids[-1] + 1:
+                    for i in range(cell_ids[-1] + 1, col_idx):
+                        cell = Cell(rowNum, num2xlcol(i), u'', formula=None)
+                        rows[rowNum].append(cell)
+                        columns[colNum].append(cell)
+                        self.__cells[u'{0}{1}'.format(colNum, rowNum)] = cell
+                        cell_ids.append(col_idx)
+
+                cell_ids.append(col_idx)
+
                 try:
                     if colType == "s":
                         stringIndex = columnNode.firstChild.firstChild.nodeValue
@@ -156,10 +184,7 @@ class Sheet(object):
                             "nodeValue", None)
                 except Exception:
                     pass
-                if not rowNum in rows:
-                    rows[rowNum] = []
-                if not colNum in columns:
-                    columns[colNum] = []
+
                 cell = Cell(rowNum, colNum, data, formula=formula)
                 rows[rowNum].append(cell)
                 columns[colNum].append(cell)

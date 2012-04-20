@@ -4,6 +4,9 @@ python-xlsx
 A small footprint xslx reader that understands shared strings and can process
 excel dates.
 
+This fork adds:
+    * transparent support for empty cells.
+
 Usage
 +++++++
 
