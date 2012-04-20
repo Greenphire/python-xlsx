@@ -63,6 +63,30 @@ class WorkbookTestCase(unittest.TestCase):
         self.assertEqual(unicode(workbook[2].cols()['A'][1].value),
                          u'エム セシビ め「こを バジョン')
 
+    def test_test3(self):
+        '''
+        Test handling blank cells
+        '''
+        workbook = self.workbooks['test3.xlsx']
+
+        # No row 3, contains only blank cells
+        self.assertEqual([row for row in workbook[1].rows()], [1, 2, 4])
+
+        # All rows have 5 cells
+        for row_num, cells in workbook[1].rows().iteritems():
+            self.assertEqual(len([vars(cell) for cell in cells]), 5)
+
+        # direct cell access
+        self.assertEqual(
+            sorted([cell for cell in workbook[1]]),
+            [
+                u'A1', u'A2', u'A4',
+                u'B1', u'B2', u'B4',
+                u'C1', u'C2', u'C4',
+                u'D1', u'D2', u'D4',
+                u'E1', u'E2', u'E4'
+            ]
+        )
 
 if __name__ == '__main__':
     unittest.main()
