@@ -9,8 +9,7 @@ This fork adds:
     * Fixes row lookups e.g. sheet['6']
 
 TODO:
-    * Blank rows are currently skipped. I'd like change this, possibly to a
-      row with a single, empty cell.
+    * Blank rows are currently skipped. I'd like change this to an empty list.
 
 Usage
 +++++++
