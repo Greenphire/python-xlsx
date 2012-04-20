@@ -214,7 +214,7 @@ class Sheet(object):
         if column:
             return self.__cols[key]
         if row:
-            return self.__rows[key]
+            return self.__rows[int(key)]
 
     def __iter__(self):
         if not self.loaded:

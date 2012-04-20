@@ -6,6 +6,7 @@ excel dates.
 
 This fork adds:
     * transparent support for empty cells.
+    * fixes row lookups e.g. sheet['6']
 
 Usage
 +++++++
